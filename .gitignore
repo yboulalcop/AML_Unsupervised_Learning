@@ -1,3 +1,21 @@
+# --- Mac System Files ---
 .DS_Store
-AML_thesis/.DS_Store
-.DS_Store
+
+# --- Jupyter Notebooks ---
+.ipynb_checkpoints/
+
+# --- Python Cache (Invisible background files) ---
+__pycache__/
+*.pyc
+
+# --- Large Datasets (To prevent the GitHub 100MB crash) ---
+*.csv
+*.zip
+
+# --- Virtual Environments (If you use them) ---
+venv/
+env/
+.env
+
+# --- VS Code / IDE Settings (Optional but good practice) ---
+.vscode/
