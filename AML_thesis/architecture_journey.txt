@@ -1,0 +1,33 @@
+ARCHITECTURE JOURNEY: THE DUAL STREAM MODEL
+By Yousra Boulal
+
+OVERVIEW
+This document outlines the technical evolution of the Dual Stream Architecture developed for my Master's thesis. It explores the limits of unsupervised machine learning in detecting multi-hop money laundering schemes and explains how standard data fusion methods actively degrade model performance.
+
+1. DATA PROCESSING & THE WHALE CRUSHER
+Detecting coordinated financial crime without labeled data requires mapping both monetary behavior and network geometry. I utilized the synthetic, highly imbalanced AMLworld HI-Small dataset. Because raw transaction networks are dominated by massive wealth disparities, feeding them directly into anomaly detectors creates heavy bias. 
+
+To solve this:
+- I engineered 7 account-level tabular node profiles.
+- I applied heavy standardization and log-transformations (the "whale crusher" aggregates) to neutralize extreme monetary imbalances. This forced the models to evaluate behavioral anomalies rather than simply flagging wealthy accounts.
+
+2. THE BASELINES & FUSION FAILURES
+I established standard baselines (K-Means, LOF, Isolation Forest, and Node2Vec), which confirmed that tabular models alone completely miss complex laundering topologies. However, attempting to integrate the tabular financial features with structural graph models (GraphSAGE) revealed two critical mathematical roadblocks:
+
+- The Homophily Trap (Early Fusion): When financial features were fed into GraphSAGE's neighborhood aggregation, the illicit anomalies were smoothed out because criminals deliberately surround themselves with legitimate accounts.
+- The Curse of Dimensionality (Late Fusion): When 64-dimensional structural embeddings were concatenated with 7-dimensional financial features prior to scoring, the massive geometric space mathematically drowned out the monetary behavior.
+
+3. THE SOLUTION: THE DUAL STREAM ARCHITECTURE
+To bypass these fusion traps, I engineered a completely custom architecture based on strict domain isolation:
+
+- Stream A (Structural): Raw topology -> GraphSAGE Embeddings -> Isolation Forest
+- Stream B (Financial): Tabular Node Profiles -> Isolation Forest
+- Late-Stage Synthesis: The independent anomaly scores are processed through a Min-Max normalizer and combined via an additive ensemble at the final decision threshold.
+
+By enforcing a strict separation of concerns, the Dual Stream Architecture prevents high-dimensional structure from mathematically drowning out low-dimensional behavior.
+
+4. KEY RESULTS
+Evaluated on highly imbalanced data (0.057% contamination rate), the Dual Stream Architecture achieved:
+- An 11-fold lift over random guessing baselines.
+- A 600% improvement over standard Early and Late Fusion methods.
+- Successful isolation of multi-hop laundering typologies (Cycles, Fan-Outs) within realistic institutional alert budgets.
